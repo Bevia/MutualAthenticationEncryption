@@ -1,4 +1,4 @@
 package com.bevia.encryption
 
-class AESEncryptionManager {
+class ECCSigner {
 }
