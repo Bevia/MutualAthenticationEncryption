@@ -8,7 +8,7 @@ import java.security.Signature
 
 class ECCVerifier(private val keyManager: KeyGenerator) : Verifier {
 
-    override fun verifySignature(alias: String, data: ByteArray, signatureStr: String): Boolean {
+    override fun verifySignature(alias: String, rsaPublicKey: ByteArray, signatureStr: String): Boolean {
         return try {
             // Load the Android Keystore
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -21,7 +21,7 @@ class ECCVerifier(private val keyManager: KeyGenerator) : Verifier {
                 // Initialize the signature with the ECC public key
                 val signature = Signature.getInstance("SHA256withECDSA")
                 signature.initVerify(eccPublicKey)
-                signature.update(data)
+                signature.update(rsaPublicKey)
 
                 // Decode the signature from Base64 and verify
                 val signatureBytes = Base64.decode(signatureStr, Base64.NO_WRAP)
