@@ -1,4 +1,4 @@
-package com.bevia.encryption
+package com.bevia.encryption.ecc
 
 
 interface KeyGenerator {

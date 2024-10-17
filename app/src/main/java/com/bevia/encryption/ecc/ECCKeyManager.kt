@@ -1,4 +1,4 @@
-package com.bevia.encryption
+package com.bevia.encryption.ecc
 
 import java.security.KeyStore
 import android.security.keystore.KeyGenParameterSpec
@@ -53,7 +53,13 @@ class ECCKeyManager : KeyGenerator {
 
             if (publicKey != null) {
                 // Convert the public key to Base64 string for easy return
-                return Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
+                val publicKeyBase64 = Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
+
+                // Log or print the public key
+                Log.d("ECCKeyManager", "Public Key for alias '$alias': $publicKeyBase64")
+                println("Public Key (Base64 Encoded): $publicKeyBase64")
+
+                return publicKeyBase64
             } else {
                 Log.e("ECCKeyManager", "Public key for alias '$alias' could not be retrieved.")
                 return null

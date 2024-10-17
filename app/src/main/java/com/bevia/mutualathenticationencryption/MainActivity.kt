@@ -7,11 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.bevia.encryption.ECCKeyGenStored
+import com.bevia.encryption.ecc.ECCKeyManager
+import com.bevia.encryption.ecc.ECCSigner
+import com.bevia.encryption.ecc.ECCVerifier
 import com.bevia.encryption.RSAKeyPairGenStored
 import java.security.KeyStore
 
 class MainActivity : AppCompatActivity() {
+
+    val keyManager = ECCKeyManager()
+    val signer = ECCSigner(keyManager)
+    val verifier = ECCVerifier(keyManager)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,10 +57,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            println("Key pair with alias $alias created successfully.")
+            println("Mistis Key pair with alias $alias created successfully.")
         } else {
             // Update the UI to reflect the deletion
-            Log.d("KeyStoreDebug", "RSA key pair already exists. Skipping key generation.")
+            Log.d("Mistis KeyStoreDebug", "RSA key pair already exists. Skipping key generation.")
         }
     }
 
@@ -64,12 +71,15 @@ class MainActivity : AppCompatActivity() {
         keyStore.load(null)
         val rsaPublicKey = keyStore.getCertificate(rsaAlia).publicKey.encoded
 
-        val signature = ECCKeyGenStored().signDataWithECCPrivateKey(eccAlias, rsaPublicKey)
-        Log.d("Mistis KeyStoreDebug", "Signature (Base64): $signature")
+        // Sign the data
+        val signature = signer.signData(eccAlias, rsaPublicKey)
+        if (signature != null) {
+            Log.d("Mistis", "Signature: $signature")
 
-        val isVerified =
-            ECCKeyGenStored().verifySignatureWithECCPublicKey(eccAlias, rsaPublicKey, signature!!)
-        Log.d("Mistis KeyStoreDebug", "Signature verified: $isVerified")
+            // Verify the signature
+            val isValid = verifier.verifySignature(eccAlias, rsaPublicKey, signature)
+            Log.d("Mistis", "Is signature valid? $isValid")
+        }
 
     }
 
@@ -77,10 +87,8 @@ class MainActivity : AppCompatActivity() {
         val alias = "ecc_keys"
 
         // Step 1: Generate and store the ECC key pair in Keystore
-        ECCKeyGenStored().generateAndStoreECCKeyPair(alias)
-
-        // Step 2: Print the ECC public key for the given alias
-        ECCKeyGenStored().printECCPublicKey(alias)
+        // Generate ECC Key Pair
+        keyManager.generateKeyPair(alias)
     }
 
 }
