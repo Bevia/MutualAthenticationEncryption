@@ -10,7 +10,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.bevia.encryption.ecc.ECCKeyManager
 import com.bevia.encryption.ecc.ECCSigner
 import com.bevia.encryption.ecc.ECCVerifier
-import com.bevia.encryption.rsa.RSAKeyPairGenStored
+import com.bevia.encryption.rsa.KeyStoreManagerImpl
+import com.bevia.encryption.rsa.PublicKeyOperations
+import com.bevia.encryption.rsa.RSAEncryptor
 import java.security.KeyStore
 
 class MainActivity : AppCompatActivity() {
@@ -32,27 +34,33 @@ class MainActivity : AppCompatActivity() {
         testingRSAKeyGenAndStorage()
         generateECCKeyPairAndStore()
         signRSAPublicKeyWithECCPrivateKey(getString(R.string.rsa_alias), getString(R.string.ecc_alias))
-        RSAKeyPairGenStored().generateApiKey(getString(R.string.rsa_alias))
+
+        // Step 1: Create an instance of KeyStoreManagerImpl
+
+        PublicKeyOperations().generateApiKey(getString(R.string.rsa_alias))
+        //RSAKeyPairGenStored().generateApiKey(getString(R.string.rsa_alias))
 
     }
 
     private fun testingRSAKeyGenAndStorage() {
-        val alias = "mistis"
+        val alias = getString(R.string.rsa_alias)
+        val keyStoreManager = KeyStoreManagerImpl()
+        val rsaEncryptor = RSAEncryptor(keyStoreManager)
 
-        if (!RSAKeyPairGenStored().doesKeyExist(alias)) {
+        if (!keyStoreManager.doesKeyExist(alias)) {
 
             // Step 1: Generate and store the key pair in Keystore
-            RSAKeyPairGenStored().generateAndStoreKeyPair(alias)
+            keyStoreManager.generateAndStoreKeyPair(alias)
 
             // Step 2: Encrypt a message using the public key
             val messageToEncrypt = "Hello, Android Keystore!"
-            val encryptedMessage = RSAKeyPairGenStored().encryptMessage(alias, messageToEncrypt)
+            val encryptedMessage = rsaEncryptor.encryptMessage(alias, messageToEncrypt)
             println("Mistis Encrypted Message: $encryptedMessage")
             // Step 3: Decrypt the message using the private key
-            val decryptedMessage = RSAKeyPairGenStored().decryptMessage(alias, encryptedMessage)
+            val decryptedMessage = rsaEncryptor.decryptMessage(alias, encryptedMessage)
             println("Mistis Decrypted Message: $decryptedMessage")
             // Print the public key for the given alias
-            RSAKeyPairGenStored().printPublicKey(alias)
+            PublicKeyOperations().printPublicKey(alias)
             Toast.makeText(
                 this,
                 "Key pair with alias $alias created successfully.",
