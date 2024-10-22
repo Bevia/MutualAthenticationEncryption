@@ -30,6 +30,17 @@ class ECCKeyManager : KeyGenerator {
             keyPairGenerator.generateKeyPair()
 
             Log.d("Mistis ECCKeyManager", "ECC P-256 key pair generated and stored successfully.")
+
+            // Verify that the key has been stored
+            val keyStore = KeyStore.getInstance("AndroidKeyStore")
+            keyStore.load(null)
+
+            if (keyStore.containsAlias(alias)) {
+                Log.d("Mistis ECCKeyManager", "Key with alias '$alias' exists in the Keystore.")
+            } else {
+                Log.e("Mistis ECCKeyManager", "Key with alias '$alias' was not found in the Keystore.")
+            }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("Mistis ECCKeyManager", "Error generating ECC key pair: ${e.message}")

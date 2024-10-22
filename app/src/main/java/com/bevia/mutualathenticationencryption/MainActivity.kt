@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         // Handle cryptographic operations
         handleCryptographicOperations()
 
-        // Generate API Key for RSA key
+        // Generate API Key for RSA key for authentication
         PublicKeyOperations().generateApiKey(getString(R.string.rsa_alias))
 
     }
