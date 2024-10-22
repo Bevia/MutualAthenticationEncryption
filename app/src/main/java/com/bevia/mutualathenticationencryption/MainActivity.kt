@@ -5,11 +5,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bevia.encryption.apikey.ApiKey
 import com.bevia.encryption.ecc.ECCKeyManager
 import com.bevia.encryption.ecc.ECCSigner
 import com.bevia.encryption.ecc.ECCVerifier
 import com.bevia.encryption.rsa.KeyStoreManagerImpl
-import com.bevia.encryption.rsa.PublicKeyOperations
 import com.bevia.encryption.rsa.RSAEncryptor
 
 class MainActivity : AppCompatActivity() {
@@ -25,27 +25,36 @@ class MainActivity : AppCompatActivity() {
 
         setupWindowInsets()
 
-        // Initialize key manager and cryptography components
+        performCryptographicOperations()
+
+        // Generate API Key for RSA key for authentication
+        ApiKey().generateApiKey(getString(R.string.rsa_alias))
+
+    }
+
+    private fun setupCryptography() {
+        // Initialize cryptography components
         keyStoreManager = KeyStoreManagerImpl()
-        eccKeyManager = ECCKeyManager() // Initialize ECCKeyManager
+        eccKeyManager = ECCKeyManager()
 
         val rsaEncryptor = RSAEncryptor(keyStoreManager)
-        val eccSigner = ECCSigner(eccKeyManager) // Pass ECCKeyManager
-        val eccVerifier = ECCVerifier(eccKeyManager) // Pass ECCKeyManager
+        val eccSigner = ECCSigner(eccKeyManager)
+        val eccVerifier = ECCVerifier(eccKeyManager)
 
         cryptographyManager = CryptographyManager(keyStoreManager, rsaEncryptor, eccKeyManager, eccSigner, eccVerifier)
 
-        // Delete keys example
-        //deleteRSAKey(getString(R.string.rsa_alias))
-        //deleteECCKey(getString(R.string.ecc_alias))
-
-        // Handle cryptographic operations
-        handleCryptographicOperations()
-
-        // Generate API Key for RSA key for authentication
-        PublicKeyOperations().generateApiKey(getString(R.string.rsa_alias))
-
     }
+
+    private fun performCryptographicOperations() {
+        if (!this::cryptographyManager.isInitialized) {
+            setupCryptography()
+        }
+        // Proceed with operations
+        cryptographyManager.handleRSAKeyGenAndStorage(getString(R.string.rsa_alias))
+        cryptographyManager.generateECCKeyPair(getString(R.string.ecc_alias))
+        cryptographyManager.signRSAPublicKeyWithECCPrivateKey(getString(R.string.rsa_alias), getString(R.string.ecc_alias))
+    }
+
 
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -53,18 +62,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun handleCryptographicOperations() {
-        val rsaAlias = getString(R.string.rsa_alias)
-        val eccAlias = getString(R.string.ecc_alias)
-
-        //PublicKeyOperations().fetchPublicKey(rsaAlias)
-        // Handle RSA and ECC operations
-        cryptographyManager.handleRSAKeyGenAndStorage(rsaAlias)
-        cryptographyManager.generateECCKeyPair(eccAlias)
-
-        cryptographyManager.signRSAPublicKeyWithECCPrivateKey(rsaAlias, eccAlias)
     }
 
     private fun deleteRSAKey(alias: String) {
