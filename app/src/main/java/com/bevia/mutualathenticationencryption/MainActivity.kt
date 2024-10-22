@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bevia.encryption.ecc.ECCKeyManager
 import com.bevia.encryption.ecc.ECCSigner
 import com.bevia.encryption.ecc.ECCVerifier
-import com.bevia.encryption.RSAKeyPairGenStored
+import com.bevia.encryption.rsa.RSAKeyPairGenStored
 import java.security.KeyStore
 
 class MainActivity : AppCompatActivity() {

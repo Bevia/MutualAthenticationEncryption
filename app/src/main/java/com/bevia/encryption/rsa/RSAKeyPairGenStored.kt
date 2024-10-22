@@ -1,4 +1,4 @@
-package com.bevia.encryption
+package com.bevia.encryption.rsa
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
