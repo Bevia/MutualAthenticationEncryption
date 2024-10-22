@@ -1,5 +1,9 @@
 package com.bevia.encryption.rsa
 
+import android.util.Base64
+import java.security.KeyStore
+import javax.crypto.Cipher
+
 class RSAEncryptor(private val keyStoreManager: KeyStoreManager) {
 
     fun encryptMessage(alias: String, message: String): String {
