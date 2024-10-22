@@ -6,6 +6,7 @@ import android.util.Base64
 import android.util.Log
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.MessageDigest
 import java.security.spec.RSAKeyGenParameterSpec
 import javax.crypto.Cipher
 
@@ -103,6 +104,36 @@ class RSAKeyPairGenStored {
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("KeyStoreDebug", "Mistis An error occurred while retrieving the public key: ${e.message}")
+        }
+    }
+
+    // New function to generate the API key from the public key
+    fun generateApiKey(alias: String): String? {
+        try {
+            // Load the Android Keystore
+            val keyStore = KeyStore.getInstance("AndroidKeyStore")
+            keyStore.load(null)
+
+            // Retrieve the public key using the alias
+            val publicKey = keyStore.getCertificate(alias)?.publicKey ?: return null
+
+            // Convert the public key to a hex string
+            val publicKeyBytes = publicKey.encoded
+            val publicKeyHex = publicKeyBytes.joinToString("") { "%02x".format(it) }
+
+            // Hash the hex-encoded public key using SHA-256
+            val sha256Digest = MessageDigest.getInstance("SHA-256")
+            val hashBytes = sha256Digest.digest(publicKeyHex.toByteArray())
+
+            // Convert the hash bytes to a hex string
+            val apiKey = hashBytes.joinToString("") { "%02x".format(it) }
+
+            Log.d("KeyStoreDebug", "Mistis Generated API Key (SHA-256 of public key): $apiKey")
+            return apiKey
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("KeyStoreDebug", "Mistis An error occurred while generating the API key: ${e.message}")
+            return null
         }
     }
 }

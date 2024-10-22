@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
         testingRSAKeyGenAndStorage()
         generateECCKeyPairAndStore()
         signRSAPublicKeyWithECCPrivateKey("mistis", "ecc_keys")
+
+        val apiKey = RSAKeyPairGenStored().generateApiKey("myKeyAlias")
+        Log.d("Mistis", "API Key: $ apiKey")
     }
 
     private fun testingRSAKeyGenAndStorage() {
