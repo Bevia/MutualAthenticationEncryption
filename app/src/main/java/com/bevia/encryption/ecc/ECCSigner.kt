@@ -5,7 +5,7 @@ import android.util.Log
 import java.security.KeyStore
 import java.security.Signature
 
-class ECCSigner(private val keyManager: KeyGenerator) : Signer {
+class ECCSigner(private val keyManager: ECCKeyManager) : Signer {
 
     override fun signData(alias: String, data: ByteArray): String? {
         return try {
@@ -26,7 +26,7 @@ class ECCSigner(private val keyManager: KeyGenerator) : Signer {
             Base64.encodeToString(signedData, Base64.NO_WRAP)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("ECCSigner", "Error signing data: ${e.message}")
+            Log.e("Mistis ECCSigner", "Error signing data: ${e.message}")
             null
         }
     }

@@ -6,7 +6,7 @@ import android.util.Log
 import java.security.KeyStore
 import java.security.Signature
 
-class ECCVerifier(private val keyManager: KeyGenerator) : Verifier {
+class ECCVerifier(private val keyManager: ECCKeyManager) : Verifier {
 
     override fun verifySignature(alias: String, rsaPublicKey: ByteArray, signatureStr: String): Boolean {
         return try {
@@ -27,12 +27,12 @@ class ECCVerifier(private val keyManager: KeyGenerator) : Verifier {
                 val signatureBytes = Base64.decode(signatureStr, Base64.NO_WRAP)
                 signature.verify(signatureBytes)
             } else {
-                Log.e("ECCVerifier", "Public key for alias '$alias' could not be retrieved.")
+                Log.e("Mistis ECCVerifier", "Public key for alias '$alias' could not be retrieved.")
                 false
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("ECCVerifier", "Error verifying signature: ${e.message}")
+            Log.e("Mistis ECCVerifier", "Error verifying signature: ${e.message}")
             false
         }
     }

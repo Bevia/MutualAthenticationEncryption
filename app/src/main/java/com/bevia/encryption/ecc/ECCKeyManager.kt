@@ -44,7 +44,7 @@ class ECCKeyManager : KeyGenerator {
 
             // Check if the alias exists in the Keystore
             if (!keyStore.containsAlias(alias)) {
-                Log.e("ECCKeyManager", "Key with alias '$alias' not found in Keystore.")
+                Log.e("Mistis ECCKeyManager", "Key with alias '$alias' not found in Keystore.")
                 return null
             }
 
@@ -56,17 +56,17 @@ class ECCKeyManager : KeyGenerator {
                 val publicKeyBase64 = Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
 
                 // Log or print the public key
-                Log.d("ECCKeyManager", "Public Key for alias '$alias': $publicKeyBase64")
-                println("Public Key (Base64 Encoded): $publicKeyBase64")
+                Log.d("Mistis ECCKeyManager", "Public Key for alias '$alias': $publicKeyBase64")
+                println("Mistis Public Key (Base64 Encoded): $publicKeyBase64")
 
                 return publicKeyBase64
             } else {
-                Log.e("ECCKeyManager", "Public key for alias '$alias' could not be retrieved.")
+                Log.e("Mistis ECCKeyManager", "Public key for alias '$alias' could not be retrieved.")
                 return null
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("ECCKeyManager", "An error occurred while retrieving the ECC public key: ${e.message}")
+            Log.e("Mistis ECCKeyManager", "An error occurred while retrieving the ECC public key: ${e.message}")
             return null
         }
     }
