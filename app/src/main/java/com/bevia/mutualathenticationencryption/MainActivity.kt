@@ -14,9 +14,22 @@ import com.bevia.encryption.rsa.RSAEncryptor
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var cryptographyManager: CryptographyManager
-    private lateinit var keyStoreManager: KeyStoreManagerImpl
-    private lateinit var eccKeyManager: ECCKeyManager
+    private val keyStoreManager: KeyStoreManagerImpl by lazy {
+        KeyStoreManagerImpl()
+    }
+
+    private val eccKeyManager: ECCKeyManager by lazy {
+        ECCKeyManager()
+    }
+
+    private val cryptographyManager: CryptographyManager by lazy {
+        // Initialize only when accessed
+        val rsaEncryptor = RSAEncryptor(keyStoreManager)
+        val eccSigner = ECCSigner(eccKeyManager)
+        val eccVerifier = ECCVerifier(eccKeyManager)
+
+        CryptographyManager(keyStoreManager, rsaEncryptor, eccKeyManager, eccSigner, eccVerifier)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,32 +42,14 @@ class MainActivity : AppCompatActivity() {
 
         // Generate API Key for RSA key for authentication
         ApiKey().generateApiKey(getString(R.string.rsa_alias))
-
-    }
-
-    private fun setupCryptography() {
-        // Initialize cryptography components
-        keyStoreManager = KeyStoreManagerImpl()
-        eccKeyManager = ECCKeyManager()
-
-        val rsaEncryptor = RSAEncryptor(keyStoreManager)
-        val eccSigner = ECCSigner(eccKeyManager)
-        val eccVerifier = ECCVerifier(eccKeyManager)
-
-        cryptographyManager = CryptographyManager(keyStoreManager, rsaEncryptor, eccKeyManager, eccSigner, eccVerifier)
-
     }
 
     private fun performCryptographicOperations() {
-        if (!this::cryptographyManager.isInitialized) {
-            setupCryptography()
-        }
-        // Proceed with operations
+        // cryptographyManager is initialized lazily, so no need to check explicitly
         cryptographyManager.handleRSAKeyGenAndStorage(getString(R.string.rsa_alias))
         cryptographyManager.generateECCKeyPair(getString(R.string.ecc_alias))
         cryptographyManager.signRSAPublicKeyWithECCPrivateKey(getString(R.string.rsa_alias), getString(R.string.ecc_alias))
     }
-
 
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
