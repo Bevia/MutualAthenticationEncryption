@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MutualAthenticationEncryption</string>
+    <string name="ecc_alias">ecc_keys</string>
+    <string name="rsa_alias">mistis</string>
 </resources>

@@ -31,10 +31,10 @@ class MainActivity : AppCompatActivity() {
 
         testingRSAKeyGenAndStorage()
         generateECCKeyPairAndStore()
-        signRSAPublicKeyWithECCPrivateKey("mistis", "ecc_keys")
+        signRSAPublicKeyWithECCPrivateKey(getString(R.string.rsa_alias), getString(R.string.ecc_alias))
 
-        val apiKey = RSAKeyPairGenStored().generateApiKey("myKeyAlias")
-        Log.d("Mistis", "API Key: $ apiKey")
+        val apiKey = RSAKeyPairGenStored().generateApiKey(getString(R.string.rsa_alias))
+        Log.d("Mistis", "API Key: $apiKey")
     }
 
     private fun testingRSAKeyGenAndStorage() {
@@ -87,11 +87,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun generateECCKeyPairAndStore() {
-        val alias = "ecc_keys"
-
         // Step 1: Generate and store the ECC key pair in Keystore
         // Generate ECC Key Pair
-        keyManager.generateKeyPair(alias)
+        keyManager.generateKeyPair(getString(R.string.ecc_alias))
     }
 
 }
