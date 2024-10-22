@@ -2,8 +2,9 @@ package com.bevia.encryption.ecc
 
 
 interface KeyGenerator {
-    fun generateKeyPair(alias: String)
-    fun getPublicKey(alias: String): String?
+    fun generateECCKeyPair(alias: String)
+    fun getECCPublicKey(alias: String): String?
+    fun deleteKey(alias: String) // New method to delete a key
 }
 
 interface Signer {

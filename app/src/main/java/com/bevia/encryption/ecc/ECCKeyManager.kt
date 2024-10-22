@@ -10,7 +10,7 @@ import java.security.KeyPairGenerator
 
 class ECCKeyManager : KeyGenerator {
 
-    override fun generateKeyPair(alias: String) {
+    override fun generateECCKeyPair(alias: String) {
         try {
             // Create a KeyPairGenerator for EC (Elliptic Curve)
             val keyPairGenerator = KeyPairGenerator.getInstance(
@@ -29,14 +29,14 @@ class ECCKeyManager : KeyGenerator {
             keyPairGenerator.initialize(keyGenParameterSpec)
             keyPairGenerator.generateKeyPair()
 
-            Log.d("ECCKeyManager", "ECC P-256 key pair generated and stored successfully.")
+            Log.d("Mistis ECCKeyManager", "ECC P-256 key pair generated and stored successfully.")
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("ECCKeyManager", "Error generating ECC key pair: ${e.message}")
+            Log.e("Mistis ECCKeyManager", "Error generating ECC key pair: ${e.message}")
         }
     }
 
-    override fun getPublicKey(alias: String): String? {
+    override fun getECCPublicKey(alias: String): String? {
         return try {
             // Load the Android Keystore
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -68,6 +68,23 @@ class ECCKeyManager : KeyGenerator {
             e.printStackTrace()
             Log.e("Mistis ECCKeyManager", "An error occurred while retrieving the ECC public key: ${e.message}")
             return null
+        }
+    }
+
+    override fun deleteKey(alias: String) {
+        try {
+            val keyStore = KeyStore.getInstance("AndroidKeyStore")
+            keyStore.load(null)
+
+            if (keyStore.containsAlias(alias)) {
+                keyStore.deleteEntry(alias) // Deletes the ECC key entry
+                Log.d("Mistis ECCKeyManager", "ECC key with alias '$alias' deleted successfully.")
+            } else {
+                Log.e("Mistis ECCKeyManager", "ECC key with alias '$alias' does not exist.")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("Mistis ECCKeyManager", "Error deleting ECC key with alias '$alias': ${e.message}")
         }
     }
 }

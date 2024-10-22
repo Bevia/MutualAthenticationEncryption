@@ -1,9 +1,10 @@
+package com.bevia.mutualathenticationencryption
+
 import android.util.Log
 import com.bevia.encryption.ecc.ECCKeyManager
 import com.bevia.encryption.ecc.ECCSigner
 import com.bevia.encryption.ecc.ECCVerifier
 import com.bevia.encryption.rsa.KeyStoreManager
-import com.bevia.encryption.rsa.PublicKeyOperations
 import com.bevia.encryption.rsa.RSAEncryptor
 import java.security.KeyStore
 
@@ -17,23 +18,22 @@ class CryptographyManager(
 
     fun handleRSAKeyGenAndStorage(alias: String) {
         if (!keyStoreManager.doesKeyExist(alias)) {
-            Log.d("Mistis CryptographyManager", "Generating RSA key pair .")
-            PublicKeyOperations().printPublicKey(alias)
+            Log.d("Mistis com.bevia.mutualathenticationencryption.CryptographyManager", "Generating RSA key pair .")
+            keyStoreManager.generateAndStoreKeyPair(alias)
         } else {
-            Log.d("Mistis CryptographyManager", "RSA key pair already exists.")
+            Log.d("Mistis com.bevia.mutualathenticationencryption.CryptographyManager", "RSA key pair already exists.")
         }
 
-        keyStoreManager.generateAndStoreKeyPair(alias)
         val messageToEncrypt = "Hello, Android Keystore!"
         val encryptedMessage = rsaEncryptor.encryptMessage(alias, messageToEncrypt)
         val decryptedMessage = rsaEncryptor.decryptMessage(alias, encryptedMessage)
 
-        Log.d("Mistis CryptographyManager", "Encrypted Message: $encryptedMessage")
-        Log.d("Mistis CryptographyManager", "Decrypted Message: $decryptedMessage")
+        Log.d("Mistis com.bevia.mutualathenticationencryption.CryptographyManager", "Encrypted Message: $encryptedMessage")
+        Log.d("Mistis com.bevia.mutualathenticationencryption.CryptographyManager", "Decrypted Message: $decryptedMessage")
     }
 
     fun generateECCKeyPair(alias: String) {
-        eccKeyManager.generateKeyPair(alias)
+        eccKeyManager.generateECCKeyPair(alias)
     }
 
     fun signRSAPublicKeyWithECCPrivateKey(rsaAlias: String, eccAlias: String) {
@@ -44,7 +44,7 @@ class CryptographyManager(
         val signature = eccSigner.signData(eccAlias, rsaPublicKey)
         signature?.let {
             val isValid = eccVerifier.verifySignature(eccAlias, rsaPublicKey, it)
-            Log.d("Mistis CryptographyManager", "Signature: $it, Is valid: $isValid")
+            Log.d("Mistis com.bevia.mutualathenticationencryption.CryptographyManager", "Signature: $it, Is valid: $isValid")
         }
     }
 }

@@ -7,7 +7,7 @@ import java.security.MessageDigest
 
 class PublicKeyOperations {
 
-    fun printPublicKey(alias: String) {
+    fun fetchPublicKey(alias: String) {
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)

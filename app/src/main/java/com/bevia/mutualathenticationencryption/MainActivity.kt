@@ -1,6 +1,5 @@
 package com.bevia.mutualathenticationencryption
 
-import CryptographyManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +15,8 @@ import com.bevia.encryption.rsa.RSAEncryptor
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cryptographyManager: CryptographyManager
+    private lateinit var keyStoreManager: KeyStoreManagerImpl
+    private lateinit var eccKeyManager: ECCKeyManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,18 +26,25 @@ class MainActivity : AppCompatActivity() {
         setupWindowInsets()
 
         // Initialize key manager and cryptography components
-        val keyStoreManager = KeyStoreManagerImpl()
+        keyStoreManager = KeyStoreManagerImpl()
+        eccKeyManager = ECCKeyManager() // Initialize ECCKeyManager
+
         val rsaEncryptor = RSAEncryptor(keyStoreManager)
-        val eccKeyManager = ECCKeyManager() // Initialize ECCKeyManager
         val eccSigner = ECCSigner(eccKeyManager) // Pass ECCKeyManager
         val eccVerifier = ECCVerifier(eccKeyManager) // Pass ECCKeyManager
 
         cryptographyManager = CryptographyManager(keyStoreManager, rsaEncryptor, eccKeyManager, eccSigner, eccVerifier)
 
+        // Delete keys example
+        //deleteRSAKey(getString(R.string.rsa_alias))
+        //deleteECCKey(getString(R.string.ecc_alias))
+
+        // Handle cryptographic operations
         handleCryptographicOperations()
 
         // Generate API Key for RSA key
         PublicKeyOperations().generateApiKey(getString(R.string.rsa_alias))
+
     }
 
     private fun setupWindowInsets() {
@@ -51,9 +59,19 @@ class MainActivity : AppCompatActivity() {
         val rsaAlias = getString(R.string.rsa_alias)
         val eccAlias = getString(R.string.ecc_alias)
 
+        //PublicKeyOperations().fetchPublicKey(rsaAlias)
         // Handle RSA and ECC operations
         cryptographyManager.handleRSAKeyGenAndStorage(rsaAlias)
         cryptographyManager.generateECCKeyPair(eccAlias)
+
         cryptographyManager.signRSAPublicKeyWithECCPrivateKey(rsaAlias, eccAlias)
+    }
+
+    private fun deleteRSAKey(alias: String) {
+        keyStoreManager.deleteKey(alias) // Call deleteKey to remove RSA key
+    }
+
+    private fun deleteECCKey(alias: String) {
+        eccKeyManager.deleteKey(alias) // Call deleteKey to remove ECC key
     }
 }
