@@ -17,17 +17,19 @@ class CryptographyManager(
 
     fun handleRSAKeyGenAndStorage(alias: String) {
         if (!keyStoreManager.doesKeyExist(alias)) {
-            keyStoreManager.generateAndStoreKeyPair(alias)
-            val messageToEncrypt = "Hello, Android Keystore!"
-            val encryptedMessage = rsaEncryptor.encryptMessage(alias, messageToEncrypt)
-            val decryptedMessage = rsaEncryptor.decryptMessage(alias, encryptedMessage)
+            Log.d("Mistis CryptographyManager", "Generating RSA key pair .")
             PublicKeyOperations().printPublicKey(alias)
-
-            Log.d("Mistis CryptographyManager", "Encrypted Message: $encryptedMessage")
-            Log.d("Mistis CryptographyManager", "Decrypted Message: $decryptedMessage")
         } else {
             Log.d("Mistis CryptographyManager", "RSA key pair already exists.")
         }
+
+        keyStoreManager.generateAndStoreKeyPair(alias)
+        val messageToEncrypt = "Hello, Android Keystore!"
+        val encryptedMessage = rsaEncryptor.encryptMessage(alias, messageToEncrypt)
+        val decryptedMessage = rsaEncryptor.decryptMessage(alias, encryptedMessage)
+
+        Log.d("Mistis CryptographyManager", "Encrypted Message: $encryptedMessage")
+        Log.d("Mistis CryptographyManager", "Decrypted Message: $decryptedMessage")
     }
 
     fun generateECCKeyPair(alias: String) {
