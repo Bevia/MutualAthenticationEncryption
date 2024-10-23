@@ -48,7 +48,8 @@ class JSONcanonicalize {
         return canonicalJson
     }
 
-    fun canonicalizeJson(jsonObject: JSONObject): String {
+    //This method efficiently canonicalizes the JSON object while keeping the code lightweight and dependency-free.
+    private fun canonicalizeJson(jsonObject: JSONObject): String {
         // Sort the keys of the JSON object using TreeMap (which sorts keys by natural order)
         val sortedMap = TreeMap<String, Any?>()
 
